@@ -1,0 +1,30 @@
+{
+	"name": "chat",
+	"service": "chat",
+	"workspaceFolder": "/var/www/app",
+	"dockerComposeFile": "../.docker/docker-compose.yml",
+	"remoteUser": "appuser",
+	"settings": {
+		"terminal.integrated.defaultProfile.linux": "zsh",
+		"[php]": {
+			"editor.defaultFormatter": "junstyle.php-cs-fixer",
+		},
+		"php-cs-fixer.executablePath": "/var/www/app/vendor/bin/php-cs-fixer",
+		"php-cs-fixer.config": "/var/www/app/.php-cs-fixer.php",
+		"php-cs-fixer.onsave": true
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"cierra.livewire-vscode",
+				"bradlc.vscode-tailwindcss",
+				"bmewburn.vscode-intelephense-client",
+				"onecentlin.laravel-blade",
+				"shufo.vscode-blade-formatter",
+				"cjhowe7.laravel-blade",
+				"adrianwilczynski.alpine-js-intellisense",
+				"sperovita.alpinejs-syntax-highlight"
+			]
+		}
+	}
+}

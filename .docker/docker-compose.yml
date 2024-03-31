@@ -1,0 +1,77 @@
+version: "3"
+
+volumes:
+    chat-postgres-volume:
+    chat-postgres-teste-volume:
+    chat-redis-volume:
+
+
+networks:
+    laranet_chat:
+        driver: bridge
+
+services:
+    ######## APP ########
+    chat:
+        build:
+            context: ..
+            dockerfile: .docker/Dockerfile
+        command: "/usr/local/bin/start"
+        working_dir: /var/www/app
+        volumes:
+            - ../:/var/www/app:cached
+        ports:
+            - 8081:8080
+        depends_on:
+            - chat-postgres
+            - chat-postgres-teste
+            - chat-redis
+        networks:
+            - laranet_chat
+
+    ######## REDIS ########
+    chat-redis:
+        image: redis:7.0.5
+        volumes:
+            - chat-redis-volume:/data
+        ports:
+            - 6380:6379
+        networks:
+            - laranet_chat
+
+    ######## POSTGRES ########
+    chat-postgres:
+        image: postgres:14.6
+        environment:
+            - POSTGRES_DB=chat-db
+            - POSTGRES_USER=chat
+            - POSTGRES_PASSWORD=chat
+        volumes:
+            - chat-postgres-volume:/var/lib/postgresql/data
+        ports:
+            - 5433:5432
+        networks:
+            - laranet_chat
+
+    ######## POSTGRES (TESTE AUTOMATIZADO) ########
+    chat-postgres-teste:
+        image: postgres:14.6
+        environment:
+            - POSTGRES_DB=chat-db
+            - POSTGRES_USER=chat
+            - POSTGRES_PASSWORD=chat
+        volumes:
+            - chat-postgres-teste-volume:/var/lib/postgresql/data
+        ports:
+            - 54178:5432
+        networks:
+            - laranet_chat
+
+    ######## MAILHOG (CAIXA DE EMAIL FAKE) ########
+    chat-mail:
+        image: mailhog/mailhog:v1.0.1
+        ports:
+            - 1025:1025
+            - 8025:8025
+        networks:
+            - laranet_chat
