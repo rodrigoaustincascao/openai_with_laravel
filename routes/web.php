@@ -1,7 +1,9 @@
 <?php
 
 use \App\AI\Chat;
+use App\Rules\SpamFree;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 use OpenAI\Laravel\Facades\OpenAI;
 
 // Mp3
@@ -47,8 +49,6 @@ Route::post("/image", function(){
 
     $assistant = new \App\AI\Chat(session('messages', []));
 
-    
-
     $assistant->visualize($attributes['description']); 
 
     session(['messages' => $assistant->messages()]);
@@ -63,32 +63,14 @@ Route::get('/replies', function(){
 });
 
 Route::post('/replies', function(){
-    $attributes=request()->validate([
-        'body' => ['required', 'string']
+    request()->validate([
+        'body' => [
+            'required', 
+            'string',
+            new SpamFree()
+        ]
     ]);
 
-    $response = OpenAI::chat()->create([
-        'model' => 'gpt-3.5-turbo-1106',
-        'messages' => [
-            ['role' => 'system', 'content' => 'You are a forum moderator who always responds using JSON.'],
-            ['role' => 'user', 'content' => <<<EOT
-
-            Please inspect the following text and determine if it is spam.
-
-            {$attributes['body']}
-
-            Expected Response Example:
-
-            {"is_spam": true|false}
-
-            EOT
-            
-            
-        ],
-    ],
-        'response_format' => ['type' => 'json_object']
-    ])->choices[0]->message->content;
-
-    return json_encode($response);
+    return 'Redirect wherever is needed. Post was valid.';
 });
 

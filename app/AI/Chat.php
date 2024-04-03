@@ -21,12 +21,7 @@ class Chat
         return $this;
     }
 
-
-    public function reply(string $message): ?string
-    {
-        return $this->send($message);
-    }
-
+ 
 
     public function send(string $message , bool $speech = false): ?string
     {
@@ -34,12 +29,12 @@ class Chat
 
         $response = OpenAI::chat()->create(
             [
-                "model"=> "gpt-3.5-turbo",
+                "model"=> "gpt-3.5-turbo-1106",
                 "messages" => $this->messages
             ])->choices[0]->message->content;
 
           if($response){
-            $this->addMessage($message, 'assistant');
+            $this->addMessage($response, 'assistant');
           }
         
           return $speech ? $this->speech($response) : $response;
@@ -65,7 +60,7 @@ class Chat
 
         $options = array_merge([
             'prompt' => $description,
-            'model' => 'dall-e-2'
+            'model' => 'dall-e-3'
         ], $options);
 
         $url= OpenAI::images()->create($options)->data[0]->url;
@@ -89,4 +84,10 @@ class Chat
     {
         return $this->messages;    
     }
+
+    public function reply(string $message): ?string
+    {
+        return $this->send($message);
+    }
+
 }
